@@ -1,0 +1,37 @@
+{
+  "name": "@civalgo/database",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "exports": {
+    ".": "./dist/src/index.js",
+    "./schema": "./dist/src/schema/index.js",
+    "./types": "./dist/src/types.js"
+  },
+  "scripts": {
+    "build": "npm run db:generate && tsc --build",
+    "clean": "rm -rf dist",
+    "check-types": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate --config ./drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push --strict --verbose --force",
+    "db:studio": "drizzle-kit studio",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "drizzle-kit": "^0.31.2",
+    "drizzle-orm": "^0.44.2",
+    "drizzle-zod": "^0.8.2",
+    "pg": "^8.16.2",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.4",
+    "@civalgo/eslint-config": "workspace:*",
+    "@civalgo/typescript-config": "workspace:*",
+    "drizzle-seed": "^0.3.1",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "@civalgo/gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "exports": {
+    ".": "./dist/src/root.js",
+    "./trpc": "./dist/src/trpc.js"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf dist",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "peerDependencies": {
+    "better-auth": "^1.2.10"
+  },
+  "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
+    "@trpc/server": "^11.4.3",
+    "@civalgo/authentication": "workspace:*",
+    "@civalgo/database": "workspace:*",
+    "nanoid": "^5.1.5",
+    "net": "^1.0.2",
+    "superjson": "^2.2.2",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@civalgo/eslint-config": "workspace:*",
+    "@civalgo/typescript-config": "workspace:*",
+    "eslint": "^9",
+    "server-only": "^0.0.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

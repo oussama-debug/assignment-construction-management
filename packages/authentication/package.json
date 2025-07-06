@@ -1,0 +1,37 @@
+{
+  "name": "@civalgo/authentication",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "exports": {
+    ".": "./dist/src/index.js",
+    "./client": "./dist/src/client.js",
+    "./server": "./dist/src/server.js"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf dist",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "peerDependencies": {
+    "better-auth": "^1.2.12"
+  },
+  "dependencies": {
+    "@civalgo/database": "workspace:*",
+    "commander": "^14.0.0",
+    "stripe": "^18.2.1"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.8.0",
+    "@paralleldrive/cuid2": "^2.2.2",
+    "@types/commander": "^2.12.5",
+    "@types/node": "^24.0.7",
+    "@civalgo/eslint-config": "workspace:*",
+    "@civalgo/typescript-config": "workspace:*",
+    "eslint": "^9",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

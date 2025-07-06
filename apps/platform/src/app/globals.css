@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@import "@civalgo/ui/styles.css";
+
+@theme {
+  --font-family-sans: var(--font-family-sans), system-ui, sans-serif;
+  --font-family-mono: var(--font-geist-mono), monospace;
+  --font-family-display: var(--font-family-sans), system-ui, sans-serif;
+
+  --color-primary: #ff9300;
+  --color-secondary: #13d3e9;
+
+  --bg-primary: #ff9300;
+  --bg-secondary: #13d3e9;
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-family-display);
+    font-weight: 600 !important;
+  }
+  .font-sans {
+    font-family: var(--font-family-sans);
+    font-weight: 400 !important;
+  }
+  .font-mono {
+    font-family: var(--font-family-mono);
+    font-weight: 400 !important;
+  }
+
+  .text-primary {
+    color: var(--color-primary);
+  }
+  .text-secondary {
+    color: var(--color-secondary);
+  }
+}
