@@ -6,7 +6,7 @@ Ce projet a été développé en utilisant mon boilerplate personnel optimisé, 
 
 ## 🎥 Démonstration
 
-Voici une démonstration complète de l'application en action :
+Voici une démonstration complète de l'application en action ( Lien en vidéo dans le repo )
 
 <video width="100%" controls>
   <source src="demo.mp4" type="video/mp4">
