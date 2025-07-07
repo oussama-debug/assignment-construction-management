@@ -62,7 +62,7 @@ export const workerRouter = createTRPCRouter({
       z.object({
         siteId: z.string().optional(),
         page: z.number().min(1).default(1),
-        limit: z.number().min(1).max(100).default(10),
+        pageSize: z.number().min(1).max(100).default(10),
       })
     )
     .query(async ({ input }) => {
@@ -75,7 +75,7 @@ export const workerRouter = createTRPCRouter({
         workerId: z.string().optional(),
         siteId: z.string().optional(),
         page: z.number().min(1).default(1),
-        limit: z.number().min(1).max(100).default(50),
+        pageSize: z.number().min(1).max(100).default(50),
       })
     )
     .query(async ({ input }) => {

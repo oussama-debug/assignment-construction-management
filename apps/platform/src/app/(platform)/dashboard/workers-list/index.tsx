@@ -34,7 +34,7 @@ type ActiveWorker = {
   notes: string | null;
 };
 
-type PaginatedResponse = {
+type ActiveWorkersResponse = {
   data: ActiveWorker[];
   pagination: {
     page: number;
@@ -123,13 +123,16 @@ function ActiveWorkersTable() {
     data: response,
     isLoading,
     error,
-  } = trpc.worker.getActiveCheckIns.useQuery({ page, limit } as any, {
-    refetchInterval: 5000,
-    refetchIntervalInBackground: true,
-  });
+  } = trpc.worker.getActiveCheckIns.useQuery(
+    { page, limit },
+    {
+      refetchInterval: 5000,
+      refetchIntervalInBackground: true,
+    }
+  );
 
-  const activeWorkers = (response as PaginatedResponse)?.data || [];
-  const pagination = (response as PaginatedResponse)?.pagination;
+  const activeWorkers = (response as ActiveWorkersResponse)?.data || [];
+  const pagination = (response as ActiveWorkersResponse)?.pagination;
 
   const table = useReactTable({
     data: activeWorkers,

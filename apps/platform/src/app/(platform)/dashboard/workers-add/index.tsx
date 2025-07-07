@@ -1,6 +1,14 @@
 "use client";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { z } from "zod";
+import { MoveRight } from "lucide-react";
+
 import { useCreateWorkers } from "@/lib/stores/use-create-workers";
+import { trpc } from "@/lib/trpc/client";
+import { authClient } from "@civalgo/authentication/client";
 import { Button } from "@civalgo/ui/button";
 import {
   Dialog,
@@ -10,14 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@civalgo/ui/dialog";
-import { MoveRight } from "lucide-react";
 import WorkersAddForm from "./workers-add-form";
-import z from "zod";
-import { trpc } from "@/lib/trpc/client";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { authClient } from "@civalgo/authentication/client";
 
 export const WorkersAddFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -67,7 +68,7 @@ export default function WorkersAdd() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsClosed}>
-      <DialogContent className="max-w-md px-0 pb-0! border border-zinc-400">
+      <DialogContent className="max-w-md px-0 pb-0 border border-zinc-400">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogHeader className="border-b border-sidebar-border">
             <div className="flex flex-col space-y-1 px-5 pb-4">
@@ -79,10 +80,10 @@ export default function WorkersAdd() {
               </DialogDescription>
             </div>
           </DialogHeader>
-          <div className="flex w-full px-5 border-b py-2 border-sidebar-border flex-col justify-start items-start bg-slate-50">
+          <div className="flex w-full px-5 border-b py-2 border-sidebar-border flex-col bg-slate-50">
             <WorkersAddForm onSubmit={onSubmit} register={form.register} />
           </div>
-          <DialogFooter className="flex flex-row items-center justify-end px-5 space-x-2 py-2">
+          <DialogFooter className="flex items-center justify-end px-5 space-x-2 py-2">
             <Button variant="white" size="sm" onClick={() => setIsClosed()}>
               Cancel
             </Button>

@@ -2,7 +2,7 @@ import { user } from "@civalgo/database/schema";
 import { eq } from "drizzle-orm";
 import { createTRPCContext } from "@civalgo/gateway";
 import { headers } from "next/headers";
-import { User } from "./types";
+import type { User } from "./types";
 
 export async function getCurrentUserRole(): Promise<User | null> {
   try {

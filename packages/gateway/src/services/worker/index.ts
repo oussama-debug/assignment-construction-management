@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { eq, desc, and, count, SQL } from "drizzle-orm";
 import db from "@civalgo/database";
 import { worker, checkIn, constructionSite } from "@civalgo/database/schema";
+import { createPagination } from "@civalgo/database";
 
 export const workerService = {
   async getWorkers() {
@@ -109,10 +110,10 @@ export const workerService = {
   },
 
   async getActiveCheckIns(
-    options: { siteId?: string; page?: number; limit?: number } = {}
+    options: { siteId?: string; page?: number; pageSize?: number } = {}
   ) {
-    const { siteId, page = 1, limit = 10 } = options;
-    const offset = (page - 1) * limit;
+    const { siteId, page = 1, pageSize = 10 } = options;
+    const offset = (page - 1) * pageSize;
 
     const whereCondition = siteId
       ? and(eq(checkIn.status, "checked_in"), eq(checkIn.siteId, siteId))
@@ -135,21 +136,13 @@ export const workerService = {
       .orderBy(desc(checkIn.checkInTime));
 
     const [data, totalResult] = await Promise.all([
-      baseQuery.limit(limit).offset(offset),
+      baseQuery.limit(pageSize).offset(offset),
       db.select({ count: count() }).from(checkIn).where(whereCondition),
     ]);
 
     const totalCount = totalResult[0]?.count || 0;
 
-    return {
-      data,
-      pagination: {
-        page,
-        limit,
-        total: totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-      },
-    };
+    return createPagination(data, totalCount, { page, pageSize });
   },
 
   async getCheckInHistory(
@@ -157,11 +150,11 @@ export const workerService = {
       workerId?: string;
       siteId?: string;
       page?: number;
-      limit?: number;
+      pageSize?: number;
     } = {}
   ) {
-    const { workerId, siteId, page = 1, limit = 50 } = options;
-    const offset = (page - 1) * limit;
+    const { workerId, siteId, page = 1, pageSize = 50 } = options;
+    const offset = (page - 1) * pageSize;
 
     const whereConditions: SQL[] = [];
     if (workerId) whereConditions.push(eq(checkIn.workerId, workerId));
@@ -192,20 +185,12 @@ export const workerService = {
       : baseQuery;
 
     const [data, totalResult] = await Promise.all([
-      finalQuery.limit(limit).offset(offset),
+      finalQuery.limit(pageSize).offset(offset),
       db.select({ count: count() }).from(checkIn).where(whereCondition),
     ]);
 
     const totalCount = totalResult[0]?.count || 0;
 
-    return {
-      data,
-      pagination: {
-        page,
-        limit,
-        total: totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-      },
-    };
+    return createPagination(data, totalCount, { page, pageSize });
   },
 };

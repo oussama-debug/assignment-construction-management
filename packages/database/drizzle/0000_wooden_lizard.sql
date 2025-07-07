@@ -98,3 +98,5 @@ CREATE INDEX "construction_site_active_idx" ON "construction_site" USING btree (
 CREATE INDEX "construction_site_code_idx" ON "construction_site" USING btree ("site_code");--> statement-breakpoint
 CREATE INDEX "worker_status_idx" ON "worker" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "worker_employee_id_idx" ON "worker" USING btree ("employee_id");
+
+INSERT INTO "construction_site" ("id", "name", "address", "site_code", "is_active") VALUES ('site-1', 'Site 1', '123 Main St, Anytown, USA', 'SITE1', true);

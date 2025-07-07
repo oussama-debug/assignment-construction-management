@@ -20,12 +20,15 @@ export const checkOutSchema = z.object({
 
 export const getActiveCheckInsSchema = z.object({
   siteId: z.string().uuid("Invalid site ID").optional(),
+  page: z.number().min(1).default(1),
+  pageSize: z.number().min(1).max(100).default(10),
 });
 
 export const getCheckInHistorySchema = z.object({
   workerId: z.string().uuid("Invalid worker ID").optional(),
   siteId: z.string().uuid("Invalid site ID").optional(),
-  limit: z.number().min(1).max(100).default(50),
+  page: z.number().min(1).default(1),
+  pageSize: z.number().min(1).max(100).default(50),
 });
 
 export const getWorkerByIdSchema = z.object({

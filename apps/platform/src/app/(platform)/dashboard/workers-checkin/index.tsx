@@ -1,68 +1,42 @@
 "use client";
 
-import { trpc } from "@/lib/trpc/client";
-import { Button } from "@civalgo/ui/button";
-import { CheckIcon } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@civalgo/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc/client";
 
-type WorkerProps = {
+import { useWorkerMatching } from "@/hooks/use-worker-matching";
+import { useCheckInOut } from "@/hooks/use-check-in-out";
+import { useCheckInStatus } from "@/hooks/use-check-in-status";
+
+import { WorkersSiteSelector } from "./checkin-site-selector";
+import { WorkersCheckInButtons } from "./checkin-actions";
+import { WorkerStatus } from "./checkin-status";
+
+import type { WorkerUser } from "@/lib/types";
+
+interface WorkersCheckinProps {
   id: string;
   name: string;
   email: string;
-};
+}
 
-export default function WorkersCheckin({ id, name, email }: WorkerProps) {
-  const [isCheckingIn, setIsCheckingIn] = useState(false);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
+export default function WorkersCheckin({
+  id,
+  name,
+  email,
+}: WorkersCheckinProps) {
   const [selectedSiteId, setSelectedSiteId] = useState<string>("");
 
-  const { mutateAsync: checkIn } = trpc.worker.checkIn.useMutation({
-    onSuccess: () => {
-      toast.success("Successfully checked in!");
-      setIsCheckingIn(false);
-      refetch();
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Failed to check in. Please try again.");
-      setIsCheckingIn(false);
-    },
-  });
-  const { mutateAsync: checkOut } = trpc.worker.checkOut.useMutation({
-    onSuccess: () => {
-      toast.success("Successfully checked out!");
-      setIsCheckingOut(false);
-      refetch();
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Failed to check out. Please try again.");
-      setIsCheckingOut(false);
-    },
+  const user: WorkerUser = { id, name, email };
+
+  const { matchedWorker, hasWorkerRecord } = useWorkerMatching(user);
+  const { checkIn, checkOut, isCheckingIn, isCheckingOut } = useCheckInOut();
+  const { isCurrentlyCheckedIn } = useCheckInStatus({
+    worker: matchedWorker,
+    selectedSiteId,
   });
 
   const { data: sites } = trpc.site.getActiveSites.useQuery();
-
-  const { data: workers } = trpc.worker.getWorkers.useQuery();
-
-  const matchedWorker = workers?.find((worker) => worker.email === email);
-
-  const { data: activeCheckIns, refetch } =
-    trpc.worker.getActiveCheckIns.useQuery({
-      siteId: selectedSiteId || undefined,
-    });
-
-  const isCurrentlyCheckedIn = activeCheckIns?.data?.some(
-    (checkIn) => checkIn.workerId === matchedWorker?.id
-  );
 
   const handleCheckIn = async () => {
     if (!selectedSiteId) {
@@ -75,7 +49,6 @@ export default function WorkersCheckin({ id, name, email }: WorkerProps) {
       return;
     }
 
-    setIsCheckingIn(true);
     await checkIn({
       workerId: matchedWorker.id,
       siteId: selectedSiteId,
@@ -88,116 +61,47 @@ export default function WorkersCheckin({ id, name, email }: WorkerProps) {
       return;
     }
 
-    try {
-      setIsCheckingOut(true);
-      await checkOut({
-        workerId: matchedWorker.id,
-      });
-      toast.success("Successfully checked out!");
-      refetch();
-    } catch (error) {
-      toast.error("Failed to check out. Please try again.");
-    } finally {
-      setIsCheckingOut(false);
-    }
+    await checkOut({
+      workerId: matchedWorker.id,
+    });
   };
 
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="mb-6 flex justify-between items-center flex-row">
-          <h1 className="text-md font-medium text-gray-900 mb-2">
+        <div className="mb-6 flex justify-between items-center">
+          <h1 className="text-md font-medium text-gray-900">
             Welcome, {name}!
           </h1>
-          <div className="flex flex-row justify-start items-center gap-x-4">
-            <div>
-              {sites && sites.length > 0 ? (
-                <Select
-                  value={selectedSiteId}
-                  onValueChange={(value) => setSelectedSiteId(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a site" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sites.map((site) => (
-                      <SelectItem key={site.id} value={site.id}>
-                        {site.name} ({site.siteCode})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <div className="text-sm text-gray-600 p-2 bg-gray-100 rounded-md">
-                  No construction sites available. Please contact your
-                  supervisor to set up construction sites.
-                </div>
-              )}
-            </div>
-            <Button
-              onClick={handleCheckIn}
-              disabled={isCurrentlyCheckedIn || isCheckingIn || !selectedSiteId}
-              loading={isCheckingIn}
-              className="w-full space-x-2"
-              variant={isCurrentlyCheckedIn ? "outline" : "default"}
-            >
-              <CheckIcon className="h-4 w-4" />
-              <span>
-                {!selectedSiteId
-                  ? "Select a site"
-                  : isCurrentlyCheckedIn
-                    ? "Already Checked In"
-                    : "Check In"}
-              </span>
-            </Button>
 
-            <Button
-              onClick={handleCheckOut}
-              disabled={!isCurrentlyCheckedIn || isCheckingOut}
-              loading={isCheckingOut}
-              className="w-full space-x-2"
-              variant={!isCurrentlyCheckedIn ? "outline" : "destructive"}
-            >
-              <span>
-                {!isCurrentlyCheckedIn ? "Not Checked In" : "Check Out"}
-              </span>
-            </Button>
+          <div className="flex items-center gap-x-4">
+            <WorkersSiteSelector
+              sites={sites}
+              selectedSiteId={selectedSiteId}
+              onSiteChange={setSelectedSiteId}
+              disabled={!hasWorkerRecord}
+            />
+
+            <WorkersCheckInButtons
+              onCheckIn={handleCheckIn}
+              onCheckOut={handleCheckOut}
+              isCheckingIn={isCheckingIn}
+              isCheckingOut={isCheckingOut}
+              isCurrentlyCheckedIn={isCurrentlyCheckedIn}
+              selectedSiteId={selectedSiteId}
+              disabled={!hasWorkerRecord}
+            />
           </div>
         </div>
 
-        <div className="mb-6 space-y-4">
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center space-x-2 mb-2">
-              <span className="font-medium text-gray-900 uppercase text-xs">
-                Status:
-              </span>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Worker ID:</span> {id}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Selected Site:</span>{" "}
-                {selectedSiteId
-                  ? sites?.find((site) => site.id === selectedSiteId)?.name ||
-                    selectedSiteId
-                  : "No site selected"}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Status:</span>
-                <span
-                  className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
-                    isCurrentlyCheckedIn
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-600"
-                  }`}
-                >
-                  {isCurrentlyCheckedIn ? "Checked In" : "Available"}
-                </span>
-              </p>
-            </div>
-          </div>
-        </div>
+        <WorkerStatus
+          worker={matchedWorker}
+          userId={id}
+          email={email}
+          selectedSiteId={selectedSiteId}
+          sites={sites}
+          isCurrentlyCheckedIn={isCurrentlyCheckedIn}
+        />
       </div>
     </div>
   );
