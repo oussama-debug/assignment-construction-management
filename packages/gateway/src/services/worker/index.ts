@@ -1,7 +1,12 @@
 import { TRPCError } from "@trpc/server";
 import { eq, desc, and, count, SQL } from "drizzle-orm";
 import db from "@civalgo/database";
-import { worker, checkIn, constructionSite } from "@civalgo/database/schema";
+import {
+  worker,
+  checkIn,
+  constructionSite,
+  user,
+} from "@civalgo/database/schema";
 import { createPagination } from "@civalgo/database";
 
 export const workerService = {
@@ -45,6 +50,25 @@ export const workerService = {
         .returning();
 
       return newWorker;
+    });
+  },
+
+  async updateUserRole(email: string, role: "worker" | "supervisor") {
+    return await db.transaction(async (tx) => {
+      const [updatedUser] = await tx
+        .update(user)
+        .set({ role })
+        .where(eq(user.email, email))
+        .returning();
+
+      if (!updatedUser) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
+      return updatedUser;
     });
   },
 

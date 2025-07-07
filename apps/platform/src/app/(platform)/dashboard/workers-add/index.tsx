@@ -44,6 +44,9 @@ export default function WorkersAdd() {
       },
     });
 
+  const { mutateAsync: updateUserRole } =
+    trpc.worker.updateUserRole.useMutation();
+
   const form = useForm<WorkersAddFormSchemaType>({
     resolver: zodResolver(WorkersAddFormSchema),
     defaultValues: {
@@ -54,15 +57,26 @@ export default function WorkersAdd() {
   });
 
   const onSubmit = async (data: WorkersAddFormSchemaType) => {
-    const result = await createWorker(data);
-    if (result?.id) {
-      await authClient.signUp.email({
-        email: data.email,
-        password: "12345678",
-        name: data.name,
-      });
-      setIsClosed();
-      form.reset();
+    try {
+      const result = await createWorker(data);
+      if (result?.id) {
+        await authClient.signUp.email({
+          email: data.email,
+          password: "12345678",
+          name: data.name,
+        });
+
+        await updateUserRole({
+          email: data.email,
+          role: "worker",
+        });
+
+        setIsClosed();
+        form.reset();
+      }
+    } catch (error) {
+      console.error("Error creating worker:", error);
+      toast.error("Failed to create worker");
     }
   };
 

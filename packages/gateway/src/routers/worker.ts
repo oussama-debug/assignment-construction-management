@@ -30,6 +30,17 @@ export const workerRouter = createTRPCRouter({
       return await workerService.createWorker(input);
     }),
 
+  updateUserRole: supervisorProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        role: z.enum(["worker", "supervisor"]),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await workerService.updateUserRole(input.email, input.role);
+    }),
+
   checkIn: protectedProcedure
     .input(
       z.object({
