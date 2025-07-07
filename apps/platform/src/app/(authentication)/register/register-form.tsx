@@ -49,7 +49,7 @@ export default function SignUpForm() {
       {
         onError: () => setIsLoading(false),
         onSuccess: () => {
-          router.push("/workspaces/create");
+          router.push("/dashboard");
         },
         onRequest: () => setIsLoading(true),
       }

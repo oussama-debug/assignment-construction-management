@@ -11,6 +11,9 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@civalgo/authentication": "workspace:*",
+    "@civalgo/gateway": "workspace:*",
+    "@civalgo/ui": "*",
     "@hookform/resolvers": "^5.1.1",
     "@radix-ui/react-select": "^2.2.5",
     "@tanstack/react-query": "^5.81.2",
@@ -20,9 +23,6 @@
     "@trpc/next": "^11.4.2",
     "@trpc/react-query": "^11.4.3",
     "@trpc/tanstack-react-query": "^11.4.3",
-    "@civalgo/authentication": "workspace:*",
-    "@civalgo/ui": "*",
-    "@civalgo/gateway": "workspace:*",
     "better-auth": "^1.2.10",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",

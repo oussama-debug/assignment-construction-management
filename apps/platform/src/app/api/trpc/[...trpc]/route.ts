@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { appRouter, createContext } from "@civalgo/gateway";
+import { appRouter } from "@civalgo/gateway";
+import { createTRPCContext } from "@civalgo/gateway/trpc";
 
 const handler = (req: NextRequest) =>
   fetchRequestHandler({
@@ -8,7 +9,7 @@ const handler = (req: NextRequest) =>
     req,
     router: appRouter as any,
     createContext: () => {
-      return createContext({ headers: req.headers });
+      return createTRPCContext({ headers: req.headers });
     },
     onError: ({ path, error, type, ctx, input }) => {},
   });

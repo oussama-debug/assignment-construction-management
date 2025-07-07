@@ -46,7 +46,7 @@ export default function Login() {
       {
         onError: () => setIsLoading(false),
         onSuccess: () => {
-          router.push("/workspaces/create");
+          router.push("/dashboard");
         },
         onRequest: () => setIsLoading(true),
       }

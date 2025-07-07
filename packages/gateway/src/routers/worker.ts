@@ -1,58 +1,84 @@
-import { createTRPCRouter, publicProcedure } from "../trpc";
-import { workerService } from "../services/worker";
+import { z } from "zod";
 import {
-  createWorkerSchema,
-  checkInSchema,
-  checkOutSchema,
-  getActiveCheckInsSchema,
-  getCheckInHistorySchema,
-  getWorkerByIdSchema,
-} from "../services/worker/validation";
+  createTRPCRouter,
+  protectedProcedure,
+  supervisorProcedure,
+} from "../trpc";
+import { workerService } from "../services/worker";
 
 export const workerRouter = createTRPCRouter({
-  getWorkers: publicProcedure.query(async () => {
+  getWorkers: protectedProcedure.query(async () => {
     return await workerService.getWorkers();
   }),
 
-  getWorkerById: publicProcedure
-    .input(getWorkerByIdSchema)
+  getWorkerById: protectedProcedure
+    .input(z.object({ workerId: z.string() }))
     .query(async ({ input }) => {
       return await workerService.getWorkerById(input.workerId);
     }),
 
-  createWorker: publicProcedure
-    .input(createWorkerSchema)
+  createWorker: supervisorProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string().email().optional(),
+        phone: z.string().optional(),
+        employeeId: z.string().optional(),
+      })
+    )
     .mutation(async ({ input }) => {
       return await workerService.createWorker(input);
     }),
 
-  checkIn: publicProcedure.input(checkInSchema).mutation(async ({ input }) => {
-    return await workerService.checkIn(
-      input.workerId,
-      input.siteId,
-      input.notes
-    );
-  }),
+  checkIn: protectedProcedure
+    .input(
+      z.object({
+        workerId: z.string(),
+        siteId: z.string(),
+        notes: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await workerService.checkIn(
+        input.workerId,
+        input.siteId,
+        input.notes
+      );
+    }),
 
-  checkOut: publicProcedure
-    .input(checkOutSchema)
+  checkOut: protectedProcedure
+    .input(
+      z.object({
+        workerId: z.string(),
+        notes: z.string().optional(),
+      })
+    )
     .mutation(async ({ input }) => {
       return await workerService.checkOut(input.workerId, input.notes);
     }),
 
-  getActiveCheckIns: publicProcedure
-    .input(getActiveCheckInsSchema)
+  getActiveCheckIns: protectedProcedure
+    .input(
+      z.object({
+        siteId: z.string().optional(),
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(10),
+      })
+    )
     .query(async ({ input }) => {
-      return await workerService.getActiveCheckIns(input.siteId);
+      return await workerService.getActiveCheckIns(input);
     }),
 
-  getCheckInHistory: publicProcedure
-    .input(getCheckInHistorySchema)
+  getCheckInHistory: protectedProcedure
+    .input(
+      z.object({
+        workerId: z.string().optional(),
+        siteId: z.string().optional(),
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(50),
+      })
+    )
     .query(async ({ input }) => {
-      return await workerService.getCheckInHistory(
-        input.workerId,
-        input.siteId,
-        input.limit
-      );
+      return await workerService.getCheckInHistory(input);
     }),
 });

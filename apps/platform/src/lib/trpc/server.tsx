@@ -9,14 +9,14 @@ import {
 } from "@trpc/tanstack-react-query";
 
 import { appRouter } from "@civalgo/gateway";
-import { createContext } from "@civalgo/gateway";
+import { createTRPCContext } from "@civalgo/gateway/trpc";
 import { makeQueryClient } from "./query";
 
 export const getQueryClient = cache(makeQueryClient);
 
 const ctx = async () => {
   const headersList = await headers();
-  return createContext({ headers: headersList as any });
+  return createTRPCContext({ headers: headersList as any });
 };
 
 export const trpc = createTRPCOptionsProxy({
@@ -27,7 +27,7 @@ export const trpc = createTRPCOptionsProxy({
 
 export async function getCaller() {
   return appRouter.createCaller(
-    await createContext({
+    await createTRPCContext({
       headers: await headers(),
     })
   );

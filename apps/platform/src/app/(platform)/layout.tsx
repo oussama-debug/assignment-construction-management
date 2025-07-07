@@ -1,3 +1,5 @@
+import WorkersAdd from "./dashboard/workers-add";
+
 export default async function PlatformLayout({
   children,
 }: {
@@ -6,6 +8,7 @@ export default async function PlatformLayout({
   return (
     <div className="h-screen w-full overflow-x-hidden bg-sidebar">
       {children}
+      <WorkersAdd />
     </div>
   );
 }
