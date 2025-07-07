@@ -1,16 +1,6 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-  index,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
-import {
-  workerStatusEnum,
-  checkInStatusEnum,
-  userRoleEnum,
-} from "./enums";
+import { workerStatusEnum, checkInStatusEnum, userRoleEnum } from "./enums";
 
 export const user = pgTable("user", {
   id: text("id")
@@ -22,7 +12,7 @@ export const user = pgTable("user", {
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
-  role: userRoleEnum("role").default("worker").notNull(),
+  role: userRoleEnum("role").default("supervisor").notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date())
     .notNull(),
