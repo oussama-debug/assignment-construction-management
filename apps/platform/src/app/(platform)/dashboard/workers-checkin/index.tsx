@@ -16,9 +16,10 @@ import { toast } from "sonner";
 type WorkerProps = {
   id: string;
   name: string;
+  email: string;
 };
 
-export default function WorkersCheckin({ id, name }: WorkerProps) {
+export default function WorkersCheckin({ id, name, email }: WorkerProps) {
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [selectedSiteId, setSelectedSiteId] = useState<string>("");
@@ -50,13 +51,17 @@ export default function WorkersCheckin({ id, name }: WorkerProps) {
 
   const { data: sites } = trpc.site.getActiveSites.useQuery();
 
+  const { data: workers } = trpc.worker.getWorkers.useQuery();
+
+  const matchedWorker = workers?.find((worker) => worker.email === email);
+
   const { data: activeCheckIns, refetch } =
     trpc.worker.getActiveCheckIns.useQuery({
       siteId: selectedSiteId || undefined,
     });
 
   const isCurrentlyCheckedIn = activeCheckIns?.data?.some(
-    (checkIn) => checkIn.workerId === id
+    (checkIn) => checkIn.workerId === matchedWorker?.id
   );
 
   const handleCheckIn = async () => {
@@ -64,18 +69,29 @@ export default function WorkersCheckin({ id, name }: WorkerProps) {
       toast.error("Please select a construction site first");
       return;
     }
+
+    if (!matchedWorker) {
+      toast.error("No worker record found. Please contact your supervisor.");
+      return;
+    }
+
     setIsCheckingIn(true);
     await checkIn({
-      workerId: id,
+      workerId: matchedWorker.id,
       siteId: selectedSiteId,
     });
   };
 
   const handleCheckOut = async () => {
+    if (!matchedWorker) {
+      toast.error("No worker record found. Please contact your supervisor.");
+      return;
+    }
+
     try {
       setIsCheckingOut(true);
       await checkOut({
-        workerId: id,
+        workerId: matchedWorker.id,
       });
       toast.success("Successfully checked out!");
       refetch();

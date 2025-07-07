@@ -18,7 +18,11 @@ export default async function Dashboard() {
   if (userRole.role !== "supervisor") {
     return (
       <div className="w-full max-w-[1280px] pt-5 mx-auto h-full flex flex-col gap-6">
-        <WorkersCheckin name={userRole.name} id={userRole.id} />
+        <WorkersCheckin
+          name={userRole.name}
+          id={userRole.id}
+          email={userRole.email}
+        />
       </div>
     );
   }

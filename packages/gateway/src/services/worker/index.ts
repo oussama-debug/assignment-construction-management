@@ -2,7 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { eq, desc, and, count, SQL } from "drizzle-orm";
 import db from "@civalgo/database";
 import { worker, checkIn, constructionSite } from "@civalgo/database/schema";
-import { auth } from "@civalgo/authentication";
 
 export const workerService = {
   async getWorkers() {
