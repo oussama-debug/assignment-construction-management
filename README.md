@@ -1,3 +1,18 @@
+# 🏗️ Système de Gestion de Chantier
+
+## 📋 À propos du projet
+
+Ce projet a été développé en utilisant mon boilerplate personnel optimisé, qui inclut une bibliothèque de composants UI personnalisés que j'ai créés et affinés au fil de mes projets. Pour ce projet spécifique, j'ai adapté les couleurs primaires et secondaires pour correspondre à l'identité visuelle de Civalgo, tout en conservant la cohérence et la qualité de mes composants éprouvés.
+
+## 🎥 Démonstration
+
+Voici une démonstration complète de l'application en action :
+
+<video width="100%" controls>
+  <source src="demo.mp4" type="video/mp4">
+  Votre navigateur ne supporte pas les vidéos HTML5. <a href="demo.mp4">Télécharger la vidéo</a>.
+</video>
+
 ## 🚀 Installation et Configuration
 
 ### Prérequis
@@ -48,7 +63,7 @@ Cette commande fait tout le boulot automatiquement :
 
 L'application sera accessible sur `http://localhost:3000`
 
-> **⚠️ Important** : Quand tu ajoutes un nouvel ouvrier, son mot de passe par défaut est **12345678**. Pense à le changer dès la première connexion ! Les comptes créés via l'inscription directe ont le rôle "superviseur" par défaut, tandis que les comptes créés via "Ajouter un ouvrier" ont le rôle "worker".
+> **⚠️ Important** : Quand tu ajoutes un nouvel ouvrier, son mot de passe par défaut est **12345678**. Pense à le changer dès la première connexion ! Les comptes créés via l'inscription directe ont le rôle "superviseur" par défaut, tandis que les comptes créés via "Ajouter un ouvrier" ont automatiquement le rôle "worker".
 
 ## 🏗️ Architecture du Projet
 
